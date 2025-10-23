@@ -1,6 +1,7 @@
 const express = require('express');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const cors = require('cors')
+const PORT = process.env.PORT || 8080;
 
 const app = express();
 app.use(cors())
@@ -44,8 +45,8 @@ client.connect()
     })
    
     // Start server after DB connected
-    app.listen(5000, () => {
-      console.log("🚀 Server is running on port 5000");
+    app.listen(PORT, () => {
+      console.log("🚀 Server is running on port 8080");
     });
   })
   .catch(error => {
