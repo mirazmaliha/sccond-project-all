@@ -2,6 +2,7 @@ const express = require('express');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const cors = require('cors')
 const PORT = process.env.PORT || 8080;
+const {ObjectId} = require('mongodb');
 
 const app = express();
 app.use(cors())
@@ -23,6 +24,7 @@ client.connect()
   .then(() => {
     console.log("✅ MongoDB connected successfully!");
     const EventCollection = client.db("sccond-project").collection("events");
+    const RegistrationCollection = client.db("sccond-project").collection("registrations");
     app.post('/AddEvents', (req, res)=> {
         EventCollection.insertOne(req.body)
         .then(result => {
@@ -40,8 +42,42 @@ client.connect()
       console.log(err)
      })
     })
+ app.post('/registrationEvent', (req, res) => {
+  const {id, email, name, date, organize } = req.body;
+
+  EventCollection.findOne({_id:new ObjectId(id)})
+  .then(event => {
+    if(!event){
+      return res.status(404).send({message:"Event not found"});
+    }
+
+    const registrationData = {
+      eventId: id,
+      eventTitle: event.title,
+      name,
+      email,
+      date,
+      organize,
+    };
+
+    RegistrationCollection.insertOne(registrationData)
+    .then(result => {
+      console.log('Registration inserted successfully');
+      res.send({success:true, result});
+    })
+    .catch(err => {
+      console.error('Insert error:', err);
+      res.status(500).send({success:false, message:'Insert failed'});
+    })
+  })
+  .catch(err => {
+    console.error('Find error:', err);
+    res.status(500).send({success:false, message:'Error finding event'});
+  });
+});
+
     app.get('/', (req, res)=> {
-      res.send('welcome')
+      res.json({meassage:'welcome'})
     })
    
     // Start server after DB connected
