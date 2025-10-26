@@ -75,6 +75,26 @@ client.connect()
     res.status(500).send({success:false, message:'Error finding event'});
   });
 });
+app.get('/myevents', (req, res)=> {
+  const email = req.query.email?.trim();
+  console.log(email)
+  RegistrationCollection.find({email:email}).toArray()
+  .then((document) => {
+    res.send(document)
+  }).catch(err => {
+    res.status(500)
+  })
+})
+app.delete('/myeventDelete/:id', (req, res)=> {
+  const id = req.params.id;
+  RegistrationCollection.deleteOne({_id:new ObjectId(id)})
+  .then(result => {
+    res.json({meassage:'successfully deleted'})
+  })
+  .catch(err => {
+    res.status(500)
+  })
+})
 
     app.get('/', (req, res)=> {
       res.json({meassage:'welcome'})
