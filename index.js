@@ -95,6 +95,25 @@ app.delete('/myeventDelete/:id', (req, res)=> {
     res.status(500)
   })
 })
+app.get('/volunteerRegisterList', (req, res)=> {
+  RegistrationCollection.find({}).toArray()
+  .then(document => {
+    res.json(document)
+  })
+  .catch(err => {
+    res.status(500)
+  })
+})
+app.delete('/registerListDelete/:id', (req, res)=> {
+  const id = req.params.id;
+  RegistrationCollection.deleteOne({_id:new ObjectId(id)})
+  .then(result => {
+    res.json({meassage:'successfully deleted'})
+  })
+  .catch(err => {
+     res.json({meassage:'some error .. please try again leter..'})
+  })
+})
 
     app.get('/', (req, res)=> {
       res.json({meassage:'welcome'})
