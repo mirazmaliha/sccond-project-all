@@ -35,7 +35,8 @@ client.connect()
         })
     })
     app.get('/events', (req, res)=> {
-     EventCollection.find({}).toArray()
+      const search = req.query.search;
+     EventCollection.find({ name: { $regex: search, $options: 'i' }}).toArray()
      .then(result => {
       res.send(result)
      }).catch(err => {
